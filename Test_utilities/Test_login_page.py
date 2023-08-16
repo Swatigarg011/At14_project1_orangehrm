@@ -2,29 +2,35 @@ import pytest
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
+# from selenium.webdriver.common.action_chains import ActionChains
 # from selenium.webdriver.support.wait import WebDriverWait
-from time import sleep
+# from time import sleep
 from Test_data import credentials
 from Test_Locators.login_page import LoginPageLocators
 
+class Test_loginPageActions():
 
-class LoginPageActions:
-
-    def __init__(self):
+    # def __init__(self):
+    #     self.loginlocators = LoginPageLocators()
+    #     self.driver = webdriver.Chrome()
+    #     self.driver.get(credentials.url)
+    #     self.driver.implicitly_wait(10)
+    @pytest.fixture()
+    def browser(self):
         self.loginlocators = LoginPageLocators()
         self.driver = webdriver.Chrome()
         self.driver.get(credentials.url)
         self.driver.maximize_window()
         self.driver.implicitly_wait(10)
 
-
+        # actions = Actionchains(self.driver)
+        yield
+        self.driver.close()
 
     # Test Case to Check whether the User is able to login Orange HRM with Valid Username and Password
-    def test_orangehrm_login(self):
+    def test_orangehrm_login(self,browser):
         try:
             self.driver.get(credentials.url)
-
-
             cookie_before = self.driver.get_cookies()[0]['value']
             username_webelement = self.driver.find_element(By.NAME, self.loginlocators.username_locator)
             username_webelement.clear()
@@ -44,9 +50,9 @@ class LoginPageActions:
             print('Element Missing')
             self.driver.close()
 
-        # Test Case to Check whether the User is not allowed to login Orange HRM with Invalid Password
+            # Test Case to Check whether the User is not allowed to login Orange HRM with Invalid Password
 
-    def test_invalid_login(self):
+    def test_invalid_login(self,browser):
         print("trying invalid Login Orangehrm")
         try:
             self.driver.get(credentials.url)
@@ -65,12 +71,3 @@ class LoginPageActions:
             print('Invalid Password, Login Unsuccessful!')
         except NoSuchElementException:
             print('Element Missing')
-
-Obj = LoginPageActions()
-Obj1 = LoginPageActions()
-
-
-Obj.test_orangehrm_login()
-sleep(5)
-Obj1.test_invalid_login()
-

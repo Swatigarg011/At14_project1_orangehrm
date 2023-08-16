@@ -1,4 +1,4 @@
-# import pytest
+import pytest
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -13,9 +13,10 @@ from Test_Locators.login_page import LoginPageLocators
 
 
 
-class EditpimEmpActions:
+class Test_EditpimEmpActions:
 
-    def __init__(self):
+    @pytest.fixture
+    def browser(self):
 
         self.loginlocators = LoginPageLocators()
         self.pimlocator = PimModulelocator()
@@ -25,9 +26,11 @@ class EditpimEmpActions:
         self.wait = WebDriverWait(self.driver, 15)
         self.driver.maximize_window()
         self.driver.implicitly_wait(10)
+        yield
+        self.driver.close()
 
         # Test Case to Check whether the User is able to Edit the existing details of an Employee.
-    def test_edit_emp(self):
+    def test_edit_emp(self,browser):
         try:
             self.driver.get(credentials.url)
             username_webelement = self.driver.find_element(By.NAME, self.loginlocators.username_locator)
@@ -57,11 +60,24 @@ class EditpimEmpActions:
             self.action.move_to_element(Edit_last_name).double_click(Edit_last_name).send_keys(Keys.DELETE).perform()
             Edit_last_name.send_keys(credentials.New_LastName)
             sleep(3)
+
+            # edit the profile picture
+            # Edit_pic_locator = self.wait.until(EC.presence_of_element_located((By.XPATH, self.pimlocator.Edit_image_locator)))
+            # self.action.move_to_element(Edit_pic_locator).click()
+            # self.driver.find_element(by=By.XPATH, value=self.pimlocator.Edit_image_locator).click()
+            # Add_new_Img = self.wait.until(EC.presence_of_element_located((By.XPATH, self.pimlocator.Add_image_for_edit_locator)))
+            # Add_new_Img.click()
+            # Add_new_Img.send_keys("C:/Users/hp/PycharmProjects/At14_project1_orangehrm/Test_data/test1.png")
+            # sleep(5)
             Save_Edit = self.wait.until(EC.presence_of_element_located((By.XPATH, self.pimlocator.Save_locator)))
             Save_Edit.click()
             print('Employee details Edited Successfully')
-        except NoSuchElementException:
+        except NoSuchElementException
             print('Element Missing')
 
-Obj = EditpimEmpActions()
-Obj.test_edit_emp()
+
+
+# I am not able to add or edit an image in OrangeHRM website.
+# Its locating an element and clicking on image element locatorbut not fetching an image.
+# I raise an query for the solution after discussing with "Suman Gangopadhyay " sir iam writing this comment.
+

@@ -1,4 +1,5 @@
 # import pytest
+import pytest
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -13,9 +14,9 @@ from Test_data import credentials
 from Test_Locators.login_page import LoginPageLocators
 
 
-class AddPimEmpActions:
-
-    def __init__(self):
+class Test_AddPimEmpActions:
+    @pytest.fixture
+    def browser(self):
 
         self.loginlocators = LoginPageLocators()
         self.pimlocator = PimModulelocator()
@@ -25,9 +26,11 @@ class AddPimEmpActions:
         self.wait = WebDriverWait(self.driver, 15)
         self.driver.maximize_window()
         self.driver.implicitly_wait(10)
+        yield
+        self.driver.close()
 
     # Test Case to Check whether the User is able to Add and Create Login for the New Employee
-    def test_add_emp(self):
+    def test_add_emp(self,browser):
         try:
             self.driver.get(credentials.url)
             username_webelement = self.driver.find_element(By.NAME, self.loginlocators.username_locator)
@@ -49,20 +52,18 @@ class AddPimEmpActions:
 
             Add_Emp = self.wait.until(EC.presence_of_element_located((By.NAME, self.pimlocator.Add_firstname_locator)))
             Add_Emp.send_keys(credentials.FirstName)
+
             self.driver.find_element(by=By.NAME, value=self.pimlocator.Add_middlename_locator).send_keys(credentials.MiddleName)
             self.driver.find_element(by=By.NAME, value=self.pimlocator.Add_lastname_locator).send_keys(credentials.LastName)
             clear_input = self.wait.until(EC.presence_of_element_located((By.XPATH, self.pimlocator.Emp_ID_locator)))
-            Add_Img = self.wait.until(EC.presence_of_element_located((By.XPATH, self.pimlocator.Add_image_locator)))
-            Add_Img.click()
-            Add_Img.send_keys('C:/Users/hp/PycharmProjects/project1_AT14_swati_orangehrm/Test_data/test1.png')
             self.action.move_to_element(clear_input).double_click(clear_input).send_keys(Keys.DELETE).perform()
-            sleep(5)
             self.driver.find_element(by=By.XPATH, value=self.pimlocator.Emp_ID_locator).send_keys(credentials.Emp_ID)
             sleep(5)
-            # self.driver.find_element(by=By.XPATH, value=self.pimlocator.Add_image_locator).send_keys(credentials.Emp_img)
 
-
-
+            # Adding Image for profile
+            Add_Img = self.wait.until(EC.presence_of_element_located((By.XPATH, self.pimlocator.Add_image_locator)))
+            Add_Img.click()
+            Add_Img.send_keys("C:/Users/hp/PycharmProjects/At14_project1_orangehrm/Test_data/imag1.jpg")
             sleep(5)
 
             # Creating Login for the New Employee
@@ -81,5 +82,5 @@ class AddPimEmpActions:
             print('Element Missing')
 
 
-Obj= AddPimEmpActions()
-Obj.test_add_emp()
+# Obj= AddPimEmpActions()
+# Obj.test_add_emp()
